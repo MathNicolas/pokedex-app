@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'Gameboy';
+    src: url('../src/fonts/font-game-boy.ttf') format('truetype');  
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@tailwind base; 
+@tailwind components;
+@tailwind utilities;
