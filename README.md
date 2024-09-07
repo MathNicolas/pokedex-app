@@ -31,7 +31,7 @@ When you click on a Pokémon from the Pokédex, you’ll get a detailed page wit
 - Types
 - Pokédex entry description
 
-![Pokemon Details Page](https://github.com/user-attachments/assets/8ab7e236-b4f8-4a2e-b33b-d7790b584102)
+![Pokemon Details Page](https://github.com/user-attachments/assets/2f3fa02c-fe62-425c-820f-8f48640d3602)
 
 ### 3. Full Pokémon List (in development)
 
