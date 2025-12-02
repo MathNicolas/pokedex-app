@@ -24,9 +24,6 @@ module.exports = {
         "custom-bg-img": "#F2F2F2",
         "custom-bg-infos": "#30A7D7"
       },
-      backgroundImage: {
-        "pokedex": "url('src/img/pokedex.png')"
-      },
       fontFamily: {
         gameboy: ['Gameboy', 'sans-serif'], 
       },

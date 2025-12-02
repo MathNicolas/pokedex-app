@@ -1,46 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePokemon } from '../hooks/usePokemon';
+import { useAllPokemon } from '../hooks/useAllPokemon';
+import PokedexFrame from '../components/pokemonFrame';
+import PokemonDisplay from '../components/pokemonDisplay';
+import SearchBox from '../components/searchBox';
 
 export default function Index() {
-    const [pokemonName, setPokemonname] = useState('bulbasaur')
-    const { data, loading, refetch: fetchPokemon } = usePokemon(pokemonName);
+    const [pokemonName, setPokemonname] = useState("bulbasaur");
+    const [suggestions, setSuggestions] = useState([]);
+    const { data, loading, refetch } = usePokemon(pokemonName);
+    const { allPokemon } = useAllPokemon();
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        fetchPokemon();
-        setPokemonname("")
-    }
+    useEffect(() => {
+        const name = pokemonName.toLowerCase();
+        if (!name) {
+            setSuggestions([]);
+            return;
+        }
+        if (allPokemon.some(p => p.name.toLowerCase() === name)) {
+            setSuggestions([]);
+            return;
+        }
+        const filtered = allPokemon
+            .filter(pokemon => pokemon.name.includes(name))
+            .slice(0, 5);
+        setSuggestions(filtered);
+    }, [pokemonName, allPokemon]);
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        refetch();
+        setSuggestions([]);
+        setPokemonname("");
+    };
+
+    const handleSuggestionClick = name => {
+        setPokemonname(name);
+        setSuggestions([]);
+    };
 
     return (
-        <div className='bg-gradient-to-b from-custom-bg-green to-custom-bg-yellow min-h-screen flex justify-center items-center'>
-            {data &&
-                <div className='bg-pokedex bg-no-repeat bg-center w-[27rem] h-[40rem] flex flex-col items-center justify-center font-gameboy'>
-
-                    <div className='h-[9rem] w-full' />
-                    <div className='h-[16rem] w-full flex flex-col justify-evenly items-center'>
-                        <div className='w-8/12 flex justify-center pr-5 mt-3'>
-                            {data.sprites && (
-                                <img src={data.sprites.front_default} alt={data.name} className='h-44 w-44' />
-                            )}
-                        </div>
-                        <div className=' mt-6 w-7/12 h-6 flex justify-end items-end'>
-                            <h1>{loading && 'Carregando...'}<span className='text-gray-700'>{data.id}</span>  <span className='text-gray-500'> - {data.name}</span> </h1>
-                        </div>
-                    </div>
-
-                    <div className='h-[15rem] w-full flex flex-col justify-around items-center'>
-
-                        <form className='flex flex-col items-center justify-center gap-9' onSubmit={handleSubmit}>
-                            <input className='w-64 h-9 pl-2 border border-black rounded shadow-[-2px_2px_0px_#7C8181,-3px_3px_0px_#4A2B33]' placeholder='Id or Name' type="text" name="" id="" value={pokemonName} onChange={(e) => setPokemonname(e.target.value)} />
-                            <button className='bg-custom-button-dark h-10 w-36 text-white border border-black rounded-md shadow-[-2px_2px_0px_0px_#2b2b2b,-4px_4px_0px_0px_#1a0108]'>Search</button>
-                        </form>
-
+        <div className="bg-gradient-to-b from-custom-bg-green to-custom-bg-yellow min-h-screen font-gameboy flex flex-col justify-center items-center">
+            {data && (
+                <PokedexFrame>
+                    <PokemonDisplay data={data} loading={loading} />
+                    <div className="h-[15rem] w-full flex flex-col justify-around items-center">
+                        <SearchBox value={pokemonName} onChange={setPokemonname} onSubmit={handleSubmit} suggestions={suggestions} onSuggestionClick={handleSuggestionClick} />
                         <p> <Link to={`/pokemon/${data.name}`}>Read More</Link></p>
                     </div>
-
-                </div>
-            }
+                </PokedexFrame>
+            )}
+            <p className="mt-5">
+                <Link to="/all">See all Pokemons</Link>
+            </p>
         </div>
     );
-};
+}
